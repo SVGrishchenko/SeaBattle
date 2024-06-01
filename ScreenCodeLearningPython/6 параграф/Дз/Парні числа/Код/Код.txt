@@ -1,0 +1,5 @@
+Age = input('Твій вік?')
+x = 0
+while x<int(Age):
+    x=x+2
+    print(x)
