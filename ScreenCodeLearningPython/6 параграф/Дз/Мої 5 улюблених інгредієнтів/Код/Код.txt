@@ -1,0 +1,5 @@
+ingredients = ["Хліб","Ковбаса","Сир","Шоколад","Сіль"]
+s = 0
+for x in ingredients:
+    s = s+1
+    print(s,x)
