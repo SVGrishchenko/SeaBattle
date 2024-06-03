@@ -9,9 +9,11 @@ root.resizable(width=False, height=False)
 canvas = Canvas(root, width=900, height=500,highlightthickness=0)
 canvas.grid(row=0, column=2,padx=10, pady=10, ipadx=0, ipady=0,)
 PL1 = []
+Map = [[0 for x in range(10)] for y in range(10)]
 
 for i in range(100):
     PL1.append(False)
+    Map[i//10][i % 10] = False
 
 # PL2Line1 =[False,False,False,False,False,False,False,False,False,False]
 # PL2Line2 =[False,False,False,False,False,False,False,False,False,False]
@@ -24,6 +26,32 @@ for i in range(100):
 # PL2Line9 =[False,False,False,False,False,False,False,False,False,False]
 # PL2Line10 =[False,False,False,False,False,False,False,False,False,False]
 
+def PrintMap():
+    for i in range(10):
+        for j in range(10):
+            print(str(Map[i][j])[0], end=" ")
+        print()
+    print()
+
+def Coords0ShipValid(coords0, len):
+    x = coords0 % 10
+    y = coords0 // 10
+    if x + len -1 < 10:
+        return False
+    for i in range(len):
+       if PL1[y * 10 + x + i]:
+           return False
+    return True
+
+def PosShip(coords, len):
+    x = coords % 10
+    y = coords // 10
+    for i in range(len):
+       PL1[y*10+x+i] = True
+
+def SetMapIfCan(x,y,value):
+    if(x>=0 and x<10 and y>=0 and y<10):
+        PL1[y*10+x] = value
 
 
 def MainMenu():
@@ -85,6 +113,12 @@ def DefPlayWithFriends():
 
 
 def Coords():
+    global coords,coordsX,coordsY
+    coords += 11
+    coordsX = 107 + (coords % 10) * 37.5
+    coordsY = 19 + (coords // 10) * 39.75
+
+def CoordsOld():
     global coords,coordsX,coordsY
     coords += 11
     if coords % 10 == 1:
@@ -173,6 +207,7 @@ def Pos4Ship():
         Coords()
         Ship4_picture = canvas.create_image(coordsX,coordsY, image= Ship4)
         print(PL1)
+        PrintMap()
         Enter4Ship.config(command=lambda: Pos3Ship(1))
     else:
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
@@ -229,6 +264,7 @@ def Pos3Ship(v):
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
     print(PL1)
+    PrintMap()
 
 
 
@@ -285,6 +321,7 @@ def Pos2Ship(v):
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
     print(PL1)
+    PrintMap()
 
 
 def Pos1Ship(v):
@@ -343,6 +380,7 @@ def Pos1Ship(v):
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
     print(PL1)
+    PrintMap()
 
 
 
