@@ -36,10 +36,10 @@ def PrintMap():
 def Coords0ShipValid(coords0, len):
     x = coords0 % 10
     y = coords0 // 10
-    if x + len -1 < 10:
+    if y < 0 or y > 9 or x < 0 or  (x + len - 1) > 9:
         return False
     for i in range(len):
-       if PL1[y * 10 + x + i]:
+       if GetMapXY(x+i,  y) != False:
            return False
     return True
 
@@ -47,12 +47,21 @@ def PosShip(coords, len):
     x = coords % 10
     y = coords // 10
     for i in range(len):
-       PL1[y*10+x+i] = True
+       SetMapXY(x+i, y-1, None)
+       SetMapXY(x+i,   y, True)
+       SetMapXY(x+i, y+1, None)
+    for i in range(3):
+        SetMapXY(x-1,  y-1+i, None )
+        SetMapXY(x+len, y-1+i, None )
 
-def SetMapIfCan(x,y,value):
+def SetMapXY(x,y,value):
     if(x>=0 and x<10 and y>=0 and y<10):
         PL1[y*10+x] = value
+        Map[y][x] = value
 
+def GetMapXY(x,y):
+    return PL1[y*10+x]
+    # return Map[y][x]
 
 def MainMenu():
     global BackG, gm_fr, gm_fr2,BackG_picture,gm_fr_picture,gm_fr2_picture,Ship4_picture,Ship4
@@ -118,57 +127,12 @@ def Coords():
     coordsX = 107 + (coords % 10) * 37.5
     coordsY = 19 + (coords // 10) * 39.75
 
-def CoordsOld():
-    global coords,coordsX,coordsY
-    coords += 11
-    if coords % 10 == 1:
-        coordsX = 145
-    if coords % 10 == 2:
-        coordsX = 185
-    if coords % 10 == 3:
-        coordsX = 220
-    if coords % 10 == 4:
-        coordsX = 260
-    if coords % 10 == 5:
-        coordsX = 300
-    if coords % 10 == 6:
-        coordsX = 335
-    if coords % 10 == 7:
-        coordsX = 375
-    if coords % 10 == 8:
-        coordsX = 410
-    if coords % 10 == 9:
-        coordsX = 445
-    if coords // 10 == 1:
-        coordsY = 60
-    if coords // 10 == 2:
-        coordsY = 102
-    if coords // 10 == 3:
-        coordsY = 144
-    if coords // 10 == 4:
-        coordsY = 186
-    if coords // 10 == 5:
-        coordsY = 223
-    if coords // 10 == 6:
-        coordsY = 262
-    if coords // 10 == 7:
-        coordsY = 302
-    if coords // 10 == 8:
-        coordsY = 344
-    if coords // 10 == 9:
-        coordsY = 386
-    if coords // 10 == 10:
-        coordsY = 428
-
-def SetPL(x,y, value):
-    if(x < 0 or x > 9 or y < 0 or y > 9):
-        return
-    PL1[coords + i + 10] = None
-
 def Pos4Ship():
     global coords,Ship4_picture,Ship4, coordsX, coordsY,RedCross, RedCross_picture
     coords = int(Entry4Ship.get())
     coords = coords-11
+
+    '''
     if (coords+3)//10==coords//10 and PL1[coords]!=None and PL1[coords+1]!=None and PL1[coords+2]!=None and PL1[coords+3]!=None:
         for i in range(4):
             PL1[coords+i] = True
@@ -202,6 +166,10 @@ def Pos4Ship():
                 PL1[coords+4-10] = None
             except:
                 pass
+    '''
+    if(Coords0ShipValid(coords, 4) ):
+        PosShip(coords,4)
+
         canvas.delete(Ship4_picture)
         Ship4 = ImageTk.PhotoImage(Ship4Im)
         Coords()
