@@ -163,6 +163,8 @@ HaveCookSpaghetti = 0
 HaveCutlet = 0
 HaveSpaghettiWithCutlet = 0
 NowSave=0
+HaveStarCoin = 400
+UpgradeStarCoin = 0.01
 #Інтерфейс для гри магазин
 #Налаштування вікна
 def on_close():
@@ -3905,6 +3907,8 @@ def DefNextListMeinMenu():
     btnSaveSaves.place(x=160, y=180)
     BackListMainMenu.place(x=0, y=260)
     btnNextListMeinMenu3.place(x=160, y=260)
+    btnClicker.place_forget()
+    BackListMainMenu.config(command=DefBackListMainMenu)
 
 def DefBackListMainMenu():
     ExchangeCurrency.place(x=0, y=2200)
@@ -6062,8 +6066,88 @@ def DefNextListMainMenu3():
     Charity.place_forget()
     btnBank.place_forget()
     btnSaveSaves.place_forget()
+    btnNextListMeinMenu3.place_forget()
+    BackListMainMenu.config(command=DefNextListMeinMenu)
+    btnClicker.place(x=0, y=22)
 
 
+
+
+def GoClicker():
+    btnClicker.place_forget()
+    BackListMainMenu.place_forget()
+    Reset.place_forget()
+    btnStarCoinTap.place(x=70,y=100)
+    BackTo3ListMainMenu.place(x=2, y=340)
+    LabelStarCoinInApp.place(x=50,y=50)
+    if UpgradeStarCoin!=0.1:
+        btnUpgradeStarCoin.place(x=70,y=280)
+    else:
+        btnUpgradeStarCoin.place_forget()
+
+def DefBackTo3ListMainMenu():
+    btnClicker.place(x=0, y=22)
+    BackListMainMenu.place(x=0, y=260)
+    btnStarCoinTap.place_forget()
+    LabelStarCoinInApp.place_forget()
+    BackTo3ListMainMenu.place_forget()
+    Reset.place(x=2, y=340)
+    btnUpgradeStarCoin.place_forget()
+
+    
+def ClickedStarCoin():
+    global HaveStarCoin
+    HaveStarCoin+=UpgradeStarCoin
+    LabelStarCoinInApp.config(text="StarCoin's:"+format(HaveStarCoin, '.2f'))
+
+
+def UpgradeStarCoin1():
+    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoin>=10:
+        UpgradeStarCoin = 0.02
+        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.03 за клік\nціна:30 StarCoin-ів в додатку',command=UpgradeStarCoin2)
+        HaveStarCoin = HaveStarCoin-10
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
+    else:
+        messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
+
+
+
+def UpgradeStarCoin2():
+    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoin>=30:
+        UpgradeStarCoin = 0.03
+        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.05 за клік\nціна:50 StarCoin-ів в додатку',command=UpgradeStarCoin3)
+        HaveStarCoin = HaveStarCoin-30
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
+    else:
+        messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
+
+
+def UpgradeStarCoin3():
+    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoin>=50:
+        UpgradeStarCoin = 0.05
+        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.1 за клік\nціна:200 StarCoin-ів в додатку',command=UpgradeStarCoin4)
+        HaveStarCoin = HaveStarCoin-50
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
+    else:
+        messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
+
+
+def UpgradeStarCoin4():
+    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoin>=200:
+        UpgradeStarCoin = 0.1
+        btnUpgradeStarCoin.place_forget()
+        HaveStarCoin = HaveStarCoin-200
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
+    else:
+        messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
 
 
 
@@ -6223,7 +6307,7 @@ LabelSave1.config(text='Збереження:'+NameSave1)
 LabelSave2.config(text='Збереження:' + NameSave2)
 LabelSave3.config(text='Збереження:' + NameSave3)
 LabelSave4.config(text='Збереження:' + NameSave4)
-
+LabelStarCoinInApp = Label(text="StarCoin's:"+str(HaveStarCoin), bg='white',font='April 15')
 
 
 
@@ -6430,6 +6514,7 @@ btnSave = Button(text='Збереження', width=17, height=4, font='April 10
 btnNextListMeinMenu3 = Button(text='Наступна сторінка', width=17, height=4, font='April 10', command=DefNextListMainMenu3)
 BackListMainMenu = Button(text='Попередня сторінка', width=17, height=4, font='April 10', command=DefBackListMainMenu)
 BackTo2ListMainMenu = Button(text='Назад', width=36, height=3, command=DefBackTo2ListMainMenu, font='April 10')
+BackTo3ListMainMenu = Button(text='Назад', width=36, height=3, command=DefBackTo3ListMainMenu, font='April 10')
 SellShopCoins = Button(text='Продати ShopCoin', bg='Green', command=DefSellShopCoins)
 BuyShopCoins = Button(text='Купити ShopCoin', bg='Red', width=15, command=DefBuyShopCoins)
 EnterForSellShopCoins = Button(text='Ввести', command=DefEnterForSellShopCoins)
@@ -6556,7 +6641,8 @@ btnFry = Button(text="Посмажити м'ясо і\nзробити котле
 btnCookSpaghettiWithCutlet = Button(text='Приготувати спагеті\nз котлетою' ,width=17,height=4, command=DefCookSpaghettiWithCutlet,font='April 10')
 btnSellSpaghettiWithCutlet = Button(text='Продами спагетті з\nкотлетою\nза 280', width=17, height=4, command = DefSpaghettiWithCutletSell, font='April 10')
 btnSaveSaves = Button(text='Зберегтися', width=17, height=4, font='April 10', command=lambda: DefSave1Save(NowSave) )
-
+btnClicker = Button(text='Клікер',width=17, height=4,font='April 10', command=GoClicker)
+btnUpgradeStarCoin = Button(text='Прокачати монету, щоб \n вона давала 0.02 за клік\nціна:10 StarCoin-ів в додатку',command=UpgradeStarCoin1)
 
 
 
@@ -6610,6 +6696,11 @@ EntryHaveShopCoin = Entry(root,width=12,state='normal')
 EntryHaveDolar = Entry(root,width=12,state='normal')
 
 #Фотографії
+ImgStarCoin = Image.open('images_shop/icons/StarCoin.jpg')
+ImgStarCoin = ImgStarCoin.resize((150,150))
+ImgStarCoin = ImageTk.PhotoImage(ImgStarCoin)
+btnStarCoinTap = Button(image=ImgStarCoin,command=ClickedStarCoin)
+####################################
 Image1Room = Image.open('images_shop/Квартири/1 квартира/Building/budinok-scaled.jpg')
 Image1Room = Image1Room.resize((150,100))
 Image1Room = ImageTk.PhotoImage(Image1Room)
