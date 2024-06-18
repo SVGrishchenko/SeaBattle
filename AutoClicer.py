@@ -5,7 +5,7 @@ import time
 IsStopClick = False
 IsClicking = False
 IsClick = False
-a = 10000
+a = 30000
 
 
 def set_clicker():

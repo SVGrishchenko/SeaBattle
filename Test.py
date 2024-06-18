@@ -2,7 +2,12 @@ from tkinter import *
 import os
 import random
 from PIL import Image, ImageTk
-
+x=8
+y=4
+Aboba=[(x,y),(3,4)]
+Aboba.remove(Aboba[1])
+Aboba.remove(Aboba[0])
+print(len(Aboba))
 root = Tk()
 root.title('Test')
 root.geometry("300x400+600+200")
@@ -24,11 +29,11 @@ def PushBtn():
 LabelMoney = Label(text='Грошей:'+str(money), font=('Comic Sans MS', 15))
 
 
-ImageButton = Image.open('images_shop/icons/photo_2023-12-27_23-33-42.jpg')
+ImageButton = Image.open('SeaBattle_Images/red-cross.png')
 ImageButton = ImageButton.resize((100 ,100))
 ImageButton = ImageTk.PhotoImage(ImageButton)
-btnImageButton = Button(image = ImageButton,command=PushBtn,text='onlinedddddd')
-btnImageButton.image = ImageButton
+btnImageButton = Button(image = ImageButton,command=PushBtn,text='onlinedddddd',state='disabled')
+# btnImageButton.image = ImageButton
 
 LabelMoney.place(x=100,y=50)
 btnImageButton.place(x=90,y=150)

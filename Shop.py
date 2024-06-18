@@ -163,8 +163,17 @@ HaveCookSpaghetti = 0
 HaveCutlet = 0
 HaveSpaghettiWithCutlet = 0
 NowSave=0
-HaveStarCoin = 400
+HaveStarCoinInApp =10
 UpgradeStarCoin = 0.01
+HaveStarCoin = 0
+CoursStarCoin = 30
+TempCourseChangeStarCoin = 0
+AfterIdCourseChangeStarCoin = ''
+sCourseChangeStarCoin = 0
+UpOrDownStarCoin = 0
+MovementStarCoin = 0
+WantBuyStarCoin = 0
+SumBuyStarCoin = 0
 #Інтерфейс для гри магазин
 #Налаштування вікна
 def on_close():
@@ -274,6 +283,7 @@ def Enter():
     Reset.place(x=5, y=337)
     tickCourseChangeShopCoins()
     tickCourseChangeDollar()
+    tickCourseChangeStarCoin()
     btnSave.place_forget()
     BackTo2ListMainMenu.config(command=DefBackTo2ListMainMenu)
     BackTo2ListMainMenu.place_forget()
@@ -3909,6 +3919,12 @@ def DefNextListMeinMenu():
     btnNextListMeinMenu3.place(x=160, y=260)
     btnClicker.place_forget()
     BackListMainMenu.config(command=DefBackListMainMenu)
+    btnWork.place_forget()
+    btnBusiness.place_forget()
+    btnCourses.place_forget()
+    btnGoSeaBattle.place_forget()
+    btnBackyard.place_forget()
+    btnGardeningShop.place_forget()
 
 def DefBackListMainMenu():
     ExchangeCurrency.place(x=0, y=2200)
@@ -3946,21 +3962,32 @@ def GoExchangeCenter():
     CourseCurrencyDollar.place(x=0,y=180)
     SellDollar.place(x=190, y=164)
     BuyDollar.place(x=190,y=192)
+    btnSellStarCoin.place(x=190, y=224)
+    btnBuyStarCoin.place(x=190,y=251)
     Lines1.place(x=0, y=90)
     Lines2.place(x=0,y=150)
     Lines3.place(x=0, y=210)
+    Lines4.place(x=0,y=270)
     EntryHaveShopCoin.config(state='normal')
     EntryHaveDolar.config(state='normal')
+    EntryHaveStarCoin.config(state='normal')
     EntryHaveShopCoin.insert(0,str(HaveShopCoins))
     EntryHaveDolar.insert(0,str(HaveDollar))
+    EntryHaveStarCoin.insert(0,format(HaveStarCoin,'.2f'))
     EntryHaveShopCoin.config(state='disabled')
     EntryHaveDolar.config(state='disabled')
+    EntryHaveStarCoin.config(state='disabled')
     SellShopCoins.place(x=190,y=105)
     BuyShopCoins.place(x=190,y=132)
     EntryHaveShopCoin.place(x=74,y=53)
     EntryHaveDolar.place(x=225,y=53)
+    EntryHaveStarCoin.place(x=60,y=300)
+    LabelCoursStarCoin.place(x=0,y=242)
     CourseCurrency.config(text='1 ShopCoin - ' + str(CoursShopCoins) + ' грн')
     CourseCurrencyDollar.config(text='1 Доллар - ' + format(CoursDollar, '.2f') + ' грн')
+    LabelCoursStarCoin.config(text='StarCoin - ' + format(CoursStarCoin, '.2f')+' грн', bg='white')
+    LabelImgStarCoin.place(x=-5,y=280)
+
 
 def DefBackTo2ListMainMenu():
     global ReadyCharity
@@ -3968,6 +3995,7 @@ def DefBackTo2ListMainMenu():
     Lines1.place(x=0, y=900)
     Lines2.place(x=0, y=1200)
     Lines3.place_forget()
+    Lines4.place_forget()
     LabelShopCoin.place(x=0, y=2000)
     BackTo2ListMainMenu.place(x=1000,y=1000)
     EntryHaveShopCoin.place(x=70, y=4500)
@@ -4034,6 +4062,25 @@ def DefBackTo2ListMainMenu():
     EntryHaveDolar.delete(0,END)
     EntryHaveShopCoin.config(state='normal')
     EntryHaveShopCoin.delete(0,END)
+    EntryHaveStarCoin.config(state='normal')
+    EntryHaveStarCoin.delete(0,END)
+    btnSellStarCoin.place_forget()
+    btnBuyStarCoin.place_forget()
+    LabelCoursStarCoin.place_forget()
+    EntryHaveStarCoin.place_forget()
+    LabelImgStarCoin.place_forget()
+    EnterForBuyStarCoin.place_forget()
+    EnterForSellStarCoin.place_forget()
+    HowWantBuyStarCoin.place_forget()
+    HowWantSellStarCoin.place_forget()
+    LabelHowWantBuyStarCoin.place_forget()
+    LabelHowWantSellStarCoin.place_forget()
+    btnWork.place_forget()
+    btnBusiness.place_forget()
+    btnCourses.place_forget()
+    btnGoSeaBattle.place_forget()
+    btnBackyard.place_forget()
+    btnGardeningShop.place_forget()
 
 def DefSellShopCoins():
     SellShopCoins.place_forget()
@@ -6067,9 +6114,17 @@ def DefNextListMainMenu3():
     btnBank.place_forget()
     btnSaveSaves.place_forget()
     btnNextListMeinMenu3.place_forget()
+    btnWorkCourses.place_forget()
+    btnBusinessCourses.place_forget()
     BackListMainMenu.config(command=DefNextListMeinMenu)
     btnClicker.place(x=0, y=22)
-
+    btnWork.place(x=160, y=22)
+    btnBusiness.place(x=0, y=100)
+    btnCourses.place(x=160, y=100)
+    btnGoSeaBattle.place(x=0, y=180)
+    btnBackyard.place(x=160, y=180)
+    btnGardeningShop.place(x=160, y=260)
+    # btnNextListMeinMenu3.place(x=0, y=260)
 
 
 
@@ -6077,9 +6132,16 @@ def GoClicker():
     btnClicker.place_forget()
     BackListMainMenu.place_forget()
     Reset.place_forget()
-    btnStarCoinTap.place(x=70,y=100)
+    btnStarCoinTap.place(x=90,y=100)
     BackTo3ListMainMenu.place(x=2, y=340)
-    LabelStarCoinInApp.place(x=50,y=50)
+    LabelStarCoinInApp.place(x=80,y=50)
+    btnWithdrawStarCoin.place(x=73,y=255)
+    btnWork.place_forget()
+    btnBusiness.place_forget()
+    btnCourses.place_forget()
+    btnGoSeaBattle.place_forget()
+    btnBackyard.place_forget()
+    btnGardeningShop.place_forget()
     if UpgradeStarCoin!=0.1:
         btnUpgradeStarCoin.place(x=70,y=280)
     else:
@@ -6093,21 +6155,29 @@ def DefBackTo3ListMainMenu():
     BackTo3ListMainMenu.place_forget()
     Reset.place(x=2, y=340)
     btnUpgradeStarCoin.place_forget()
-
+    btnWithdrawStarCoin.place_forget()
+    btnBusinessCourses.place_forget()
+    btnWorkCourses.place_forget()
+    btnGoSeaBattle.place(x=0, y=180)
+    btnWork.place(x=160, y=22)
+    btnBusiness.place(x=0, y=100)
+    btnCourses.place(x=160, y=100)
+    btnBackyard.place(x=160, y=180)
+    btnGardeningShop.place(x=160, y=260)
     
 def ClickedStarCoin():
-    global HaveStarCoin
-    HaveStarCoin+=UpgradeStarCoin
-    LabelStarCoinInApp.config(text="StarCoin's:"+format(HaveStarCoin, '.2f'))
+    global HaveStarCoinInApp
+    HaveStarCoinInApp+=UpgradeStarCoin
+    LabelStarCoinInApp.config(text="StarCoin's:"+format(HaveStarCoinInApp, '.2f'))
 
 
 def UpgradeStarCoin1():
-    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
-    if HaveStarCoin>=10:
+    global HaveStarCoinInApp, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoinInApp>=9.99:
         UpgradeStarCoin = 0.02
         btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.03 за клік\nціна:30 StarCoin-ів в додатку',command=UpgradeStarCoin2)
-        HaveStarCoin = HaveStarCoin-10
-        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        HaveStarCoinInApp = HaveStarCoinInApp-10
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoinInApp, '.2f'))
         messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
     else:
         messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
@@ -6115,39 +6185,191 @@ def UpgradeStarCoin1():
 
 
 def UpgradeStarCoin2():
-    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
-    if HaveStarCoin>=30:
+    global HaveStarCoinInApp, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoinInApp>=29.99:
         UpgradeStarCoin = 0.03
-        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.05 за клік\nціна:50 StarCoin-ів в додатку',command=UpgradeStarCoin3)
-        HaveStarCoin = HaveStarCoin-30
-        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.05 за клік\nціна:70 StarCoin-ів в додатку',command=UpgradeStarCoin3)
+        HaveStarCoinInApp = HaveStarCoinInApp-30
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoinInApp, '.2f'))
         messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
     else:
         messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
 
 
 def UpgradeStarCoin3():
-    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
-    if HaveStarCoin>=50:
+    global HaveStarCoinInApp, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoinInApp>=70:
         UpgradeStarCoin = 0.05
-        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.1 за клік\nціна:200 StarCoin-ів в додатку',command=UpgradeStarCoin4)
-        HaveStarCoin = HaveStarCoin-50
-        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        btnUpgradeStarCoin.config(text='Прокачати монету, щоб \n вона давала 0.1 за клік\nціна:300 StarCoin-ів в додатку',command=UpgradeStarCoin4)
+        HaveStarCoinInApp = HaveStarCoinInApp-70
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoinInApp, '.2f'))
         messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
     else:
         messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
 
 
 def UpgradeStarCoin4():
-    global HaveStarCoin, UpgradeStarCoin, btnUpgradeStarCoin
-    if HaveStarCoin>=200:
+    global HaveStarCoinInApp, UpgradeStarCoin, btnUpgradeStarCoin
+    if HaveStarCoinInApp>=300:
         UpgradeStarCoin = 0.1
         btnUpgradeStarCoin.place_forget()
-        HaveStarCoin = HaveStarCoin-200
-        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoin, '.2f'))
+        HaveStarCoinInApp = HaveStarCoinInApp-300
+        LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoinInApp, '.2f'))
         messagebox.showinfo("Повідомлення", "Ви успішно купили це покращення")
     else:
         messagebox.showerror("Помилка", "У вас немає стільки StarCoin-ів")
+
+
+
+def tickCourseChangeStarCoin():
+    global TempCourseChangeStarCoin, AfterIdCourseChangeStarCoin, sCourseChangeStarCoin, CoursStarCoin, UpOrDown, MovementStarCoin
+    AfterIdCourseChangeStarCoin = root.after(45454,tickCourseChangeStarCoin)
+    TempCourseChangeStarCoin +=1
+    if TempCourseChangeStarCoin == 2:
+        #print('aboba')
+        TempCourseChangeStarCoin = 1
+        UpOrDown = random.randint(1,2) # Якщо 1 то -      #Якщо 2 то +
+        #print(UpOrDown)
+        MovementStarCoin = random.randint(1,50)
+        #print(MovementShopCoins)
+        if UpOrDown == 1:
+            CoursStarCoin = CoursStarCoin - (MovementStarCoin/100)
+        else:
+            CoursStarCoin = CoursStarCoin + (MovementStarCoin/100)
+        if CoursStarCoin<=3:
+            CoursStarCoin = CoursStarCoin + (MovementStarCoin/100)
+        LabelCoursStarCoin.config(text='StarCoin - ' + format(CoursStarCoin, '.2f')+' грн', bg='white')
+
+
+
+def DefSellStarCoin():
+    btnSellStarCoin.place_forget()
+    btnBuyStarCoin.place_forget()
+    HowWantSellStarCoin.place(x=155, y=250)
+    LabelHowWantSellStarCoin.place(x=120, y=230)
+    EnterForSellStarCoin.place(x=255, y=245)
+
+
+def DefBuyStarCoin():
+    btnSellStarCoin.place_forget()
+    btnBuyStarCoin.place_forget()
+    HowWantBuyStarCoin.place(x=155, y=250)
+    LabelHowWantBuyStarCoin.place(x=120, y=230)
+    EnterForBuyStarCoin.place(x=255, y=245)
+
+
+def DefEnterForBuyStarCoin():
+    global money, WantBuyStarCoin, SumBuyStarCoin, HaveStarCoin, MoneyOnBankCard
+    if PayInExchangeCenter =='Money':
+        strWantBuyStarCoin = HowWantBuyStarCoin.get()
+        WantBuyStarCoin = int(strWantBuyStarCoin)
+        SumBuyStarCoin = WantBuyStarCoin*CoursStarCoin
+        if SumBuyStarCoin <= money and WantBuyStarCoin>0:
+            money = money - SumBuyStarCoin
+            LeyblMoney['text'] = 'У тебе ' + format(money, '.2f') + ' гривень'
+            btnSellStarCoin.place(x=190, y=224)
+            btnBuyStarCoin.place(x=190, y=251)
+            HaveStarCoin = HaveStarCoin + WantBuyStarCoin
+            EntryHaveStarCoin.config(state='normal')
+            EntryHaveStarCoin.delete(0, END)
+            EntryHaveStarCoin.insert(0, str(HaveStarCoin))
+            EntryHaveStarCoin.config(state='disabled')
+            EnterForBuyStarCoin.place_forget()
+            LabelHowWantBuyStarCoin.place_forget()
+            HowWantBuyStarCoin.place_forget()
+        else:
+            messagebox.showerror('Сталася помилка','Ой, сталася помилка. Або у вас невистача грошей або ви ввели некоректну сумму купівлі StarCoins')
+    if PayInExchangeCenter == 'BankCard' and ProofPinCode == PinCode:
+        strWantBuyStarCoin = HowWantBuyStarCoin.get()
+        WantBuyStarCoin = int(strWantBuyStarCoin)
+        SumBuyStarCoin = WantBuyStarCoin * CoursStarCoin
+        if SumBuyStarCoin <= MoneyOnBankCard and WantBuyStarCoin > 0:
+            MoneyOnBankCard = MoneyOnBankCard - SumBuyStarCoin
+            btnSellStarCoin.place(x=190, y=224)
+            btnBuyStarCoin.place(x=190, y=251)
+            HaveStarCoin = HaveStarCoin + WantBuyStarCoin
+            EntryHaveStarCoin.config(state='normal')
+            EntryHaveStarCoin.delete(0, END)
+            EntryHaveStarCoin.insert(0, str(HaveStarCoin))
+            EntryHaveStarCoin.config(state='disabled')
+            EnterForBuyStarCoin.place_forget()
+            LabelHowWantBuyStarCoin.place_forget()
+            HowWantBuyStarCoin.place_forget()
+        else:
+            messagebox.showerror('Сталася помилка',
+                                   'Ой, сталася помилка. Або у вас невистача грошей або ви ввели некоректну сумму купівлі StarCoins')
+
+def DefEnterForSellStarCoin():
+    global ReadySellStarCoin, money, HaveStarCoin, MoneyOnBankCard
+    if PayInExchangeCenter =='Money':
+        StrReadySellStarCoin = HowWantSellStarCoin.get()
+        ReadySellStarCoin = int(StrReadySellStarCoin)
+        if (ReadySellStarCoin>0) and (ReadySellStarCoin <= HaveStarCoin):
+            money = money + (ReadySellStarCoin*CoursStarCoin)
+            LeyblMoney['text'] = 'У тебе ' + format(money, '.2f') + ' гривень'
+            messagebox.showinfo('Підсумок','За ' + StrReadySellStarCoin + ' StarCoins ви отримали '+ str(ReadySellStarCoin*CoursStarCoin) + ' гривень')
+            HaveStarCoin = HaveStarCoin - ReadySellStarCoin
+            EntryHaveStarCoin.config(state='normal')
+            EntryHaveStarCoin.delete(0, END)
+            EntryHaveStarCoin.insert(0, str(HaveStarCoin))
+            EntryHaveStarCoin.config(state='disabled')
+            HowWantSellStarCoin.place_forget()
+            LabelHowWantSellStarCoin.place_forget()
+            EnterForSellStarCoin.place_forget()
+            btnSellStarCoin.place(x=190, y=224)
+            btnBuyStarCoin.place(x=190, y=251)
+        else:
+            messagebox.showerror('Помилка', 'Сталася помилка, або у вас немає стільки монет або ви ввели некоректну кількість монет')
+            HowWantSellStarCoin.place_forget()
+            LabelHowWantSellStarCoin.place_forget()
+            EnterForSellStarCoin.place_forget()
+            btnSellStarCoin.place(x=190, y=224)
+            btnBuyStarCoin.place(x=190, y=251)
+    if PayInExchangeCenter =='BankCard' and ProofPinCode==PinCode:
+        StrReadyStarCoin = HowWantSellStarCoin.get()
+        ReadySellStarCoin = int(StrReadySellStarCoin)
+        if ReadySellStarCoin > 0 and ReadySellStarCoin <= HaveStarCoin:
+            MoneyOnBankCard = MoneyOnBankCard + (ReadySellStarCoin * CoursStarCoin)
+            messagebox.showinfo('Підсумок', 'За ' + StrReadySellStarCoin + ' ShopCoins ви отримали ' + str(ReadySellStarCoin * CoursStarCoin) + ' гривень')
+            HaveStarCoin = HaveStarCoin - ReadySellStarCoin
+            EntryHaveStarCoin.config(state='normal')
+            EntryHaveStarCoin.delete(0, END)
+            EntryHaveStarCoin.insert(0, str(HaveShopCoins))
+            EntryHaveStarCoin.config(state='disabled')
+            HowWantSellStarCoin.place_forget()
+            LabelHowWantSellStarCoin.place_forget()
+            EnterForSellStarCoin.place_forget()
+            btnSellStarCoin.place(x=190, y=105)
+            btnBuyStarCoin.place(x=190, y=132)
+    print(HaveStarCoin)
+
+
+def WithdrawStarCoin():
+    global HaveStarCoin, HaveStarCoinInApp
+    HaveStarCoin += HaveStarCoinInApp
+    HaveStarCoinInApp = 0
+    LabelStarCoinInApp.config(text="StarCoin's:" + format(HaveStarCoinInApp, '.2f'))
+    messagebox.showinfo('Успішно','Ваші StarCoin-и успішно виведенні на біржу')
+
+
+
+def GoCourses():
+    btnWork.place_forget()
+    btnBusiness.place_forget()
+    btnCourses.place_forget()
+    btnClicker.place_forget()
+    BackListMainMenu.place_forget()
+    Reset.place_forget()
+    btnGoSeaBattle.place_forget()
+    BackTo3ListMainMenu.place(x=2, y=340)
+    btnWorkCourses.place(x=80,y=105)
+    btnBusinessCourses.place(x=80, y=175)
+    btnBackyard.place_forget()
+    btnGardeningShop.place_forget()
+
+
+def defStartSeaBattle():
+    os.startfile('E:\PycharmProjects\pythonProject\pythonProject1\output\Sea_Battle\SeaBattle.exe')
 
 
 
@@ -6242,6 +6464,7 @@ LabelTaimerMaining1House = Label(frame,width=18, font='April 20', bg='white',tex
 Lines1 = Label(text='------------------------------------------------------------', bg='white')
 Lines2 = Label(text='------------------------------------------------------------', bg='white')
 Lines3 = Label(text='------------------------------------------------------------', bg='white')
+Lines4 = Label(text='------------------------------------------------------------', bg='white')
 CourseCurrency = Label(text='1 ShopCoin - ' + str(CoursShopCoins) + ' грн', bg='white')
 LabelHowWantSellShopCoins = Label(frame, text='Скільки хочете\nпродати ShopCoins?', bg='white')
 LabelHowWantSellDollar = Label(frame, text='Скільки хочете\nпродати доларів?', bg='white')
@@ -6307,7 +6530,13 @@ LabelSave1.config(text='Збереження:'+NameSave1)
 LabelSave2.config(text='Збереження:' + NameSave2)
 LabelSave3.config(text='Збереження:' + NameSave3)
 LabelSave4.config(text='Збереження:' + NameSave4)
-LabelStarCoinInApp = Label(text="StarCoin's:"+str(HaveStarCoin), bg='white',font='April 15')
+LabelStarCoinInApp = Label(text="StarCoin's:"+str(HaveStarCoinInApp), bg='white',font='April 15')
+LabelCoursStarCoin = Label(text='StarCoin - 30 грн', bg='white')
+LabelHowWantSellStarCoin = Label(frame, text='Скільки хочете продати StarCoins?', bg='white')
+LabelHowWantBuyStarCoin = Label(frame, text='Скільки хочете купити StarCoins?', bg='white')
+
+
+
 
 
 
@@ -6643,9 +6872,19 @@ btnSellSpaghettiWithCutlet = Button(text='Продами спагетті з\nк
 btnSaveSaves = Button(text='Зберегтися', width=17, height=4, font='April 10', command=lambda: DefSave1Save(NowSave) )
 btnClicker = Button(text='Клікер',width=17, height=4,font='April 10', command=GoClicker)
 btnUpgradeStarCoin = Button(text='Прокачати монету, щоб \n вона давала 0.02 за клік\nціна:10 StarCoin-ів в додатку',command=UpgradeStarCoin1)
-
-
-
+btnWithdrawStarCoin = Button(text='Вивести StarCoin на біржу', command=WithdrawStarCoin)
+btnSellStarCoin = Button(text='Продати StarCoin', bg='Green', width=15,command=DefSellStarCoin)
+btnBuyStarCoin = Button(text='Купити StarCoin', bg='Red', width=15,command=DefBuyStarCoin)
+EnterForSellStarCoin = Button(text='Ввести', command=DefEnterForSellStarCoin)
+EnterForBuyStarCoin = Button(text='Ввести', command=DefEnterForBuyStarCoin)
+btnWork = Button(text='Робота',width=17, height=4,font='April 10')
+btnBusiness = Button(text='Бізнеси',width=17, height=4,font='April 10')
+btnCourses = Button(text='Курси',width=17, height=4,font='April 10', command=GoCourses)
+btnWorkCourses = Button(text='Курси по\nроботам',width=17, height=4,font='April 10')
+btnBusinessCourses = Button(text='Курси по\nбізнесу',width=17, height=4,font='April 10')
+btnGoSeaBattle = Button(text='Пограти в морській\nбій',width=17, height=4,font='April 10',command=defStartSeaBattle)
+btnBackyard = Button(text='Город',width=17, height=4,font='April 10')
+btnGardeningShop = Button(text='Магазин\n"Все для городу"',width=17, height=4,font='April 10')
 
 #Поля вводу
 #Запитує скільки у тебе грошей
@@ -6657,6 +6896,8 @@ HowWantSellShopCoins = Entry(root, width=15,state='normal')
 HowWantBuyShopCoins = Entry(root, width=15,state='normal')
 HowWantSellDollar = Entry(root, width=15,state='normal')
 HowWantBuyDollar = Entry(root, width=15,state='normal')
+HowWantBuyStarCoin = Entry(root,width=15,state='normal')
+HowWantSellStarCoin = Entry(root,width=15,state='normal')
 YourBuy =  Entry(root, width=23,state='normal')
 YourBuy2 =  Entry(root, width=23,state='normal')
 YourBuy3 =  Entry(root, width=23,state='normal')
@@ -6694,12 +6935,20 @@ EntryHowMoneyOnDeposit = Entry(root,width=46,state='normal')
 EntryNameSave = Entry(root,width=20,state='normal')
 EntryHaveShopCoin = Entry(root,width=12,state='normal')
 EntryHaveDolar = Entry(root,width=12,state='normal')
+EntryHaveStarCoin = Entry(root,width=20,state='normal')
+
+
+
 
 #Фотографії
 ImgStarCoin = Image.open('images_shop/icons/StarCoin.jpg')
-ImgStarCoin = ImgStarCoin.resize((150,150))
+ImgStarCoin = ImgStarCoin.resize((100,100))
+ImgStarCoinLabel = ImgStarCoin.resize((60,60))
 ImgStarCoin = ImageTk.PhotoImage(ImgStarCoin)
+ImgStarCoinLabel = ImageTk.PhotoImage(ImgStarCoinLabel)
 btnStarCoinTap = Button(image=ImgStarCoin,command=ClickedStarCoin)
+LabelImgStarCoin = Label(image= ImgStarCoinLabel)
+LabelImgStarCoin.image = ImgStarCoinLabel
 ####################################
 Image1Room = Image.open('images_shop/Квартири/1 квартира/Building/budinok-scaled.jpg')
 Image1Room = Image1Room.resize((150,100))
