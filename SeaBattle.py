@@ -14,7 +14,7 @@ Buttons1Pl = [[0 for x in range(10)] for y in range(10)]
 Buttons2Pl = [[0 for x in range(10)] for y in range(10)]
 InBattleShip1PL = 20
 InBattleShip2PL = 20
-Cords4Ship1PL = []
+# Cords4Ship1PL = []
 Cords4Ship2PL = []
 Cords3Ship_1_1PL = []
 Cords3Ship_2_1PL = []
@@ -34,6 +34,33 @@ Cords1Ship_1_2PL = []
 Cords1Ship_2_2PL = []
 Cords1Ship_3_2PL = []
 Cords1Ship_4_2PL = []
+
+CoordsShips_1PL = [[] for y in range(10)]
+for i in range(10):
+    CoordsShips_1PL[i] = []
+CoordsShips_2PL = [[] for y in range(10)]
+
+def GetShipNumber(typeShip, numberShip):
+    if typeShip==4:
+        return 0;
+    if typeShip==3:
+        return numberShip;
+    if typeShip==2:
+        return 2+numberShip;
+    if typeShip==1:
+        return 5+numberShip;
+
+def GetShipLenByNumber(shipNumber):
+    if shipNumber == 0:
+        return 4;
+    if shipNumber >= 1 and shipNumber <= 2:
+        return 3;
+    if shipNumber >= 3 and shipNumber <= 5:
+        return 2;
+    else:
+        return 1;
+
+
 def PrintMap(pl):
     for i in range(10):
         for j in range(10):
@@ -62,23 +89,14 @@ def PosShip(coords, len,pl,typeShip,NumderShip):
     x = coords % 10
     y = coords // 10
     for i in range(len):
-        if pl==1:
-            SetMapXY(x+i, y-1, None, 1)
-            SetMapXY(x+i, y, True,1)
-            SetMapXY(x+i, y+1, None,1)
-            ListKilled(x, y, i, typeShip, NumderShip,1)
-        else:
-            SetMapXY(x+i, y-1, None, 2)
-            SetMapXY(x+i, y, True,2)
-            SetMapXY(x+i, y+1, None,2)
-            ListKilled(x, y, i, typeShip, NumderShip, 2)
+        SetMapXY(x+i, y-1, None, pl)
+        SetMapXY(x+i, y, True, pl)
+        SetMapXY(x+i, y+1, None, pl)
+        ListKilled(x, y, i, typeShip, NumderShip, pl)
     for i in range(3):
-        if pl==1:
-            SetMapXY(x-1,  y-1+i, None,1)
-            SetMapXY(x+len, y-1+i, None,1)
-        else:
-            SetMapXY(x - 1, y - 1 + i, None, 2)
-            SetMapXY(x + len, y - 1 + i, None, 2)
+        SetMapXY(x-1,  y-1+i, None,pl)
+        SetMapXY(x+len, y-1+i, None,pl)
+
 def SetMapXY(x,y,value, pl):
     if(x>=0 and x<10 and y>=0 and y<10):
         if pl == 1:
@@ -346,7 +364,11 @@ def DefFire(pl,x,y):
 
 
 def ListKilled(x,y,i,typeShip,NumderShip,pl):
+    shipNumber = GetShipNumber(typeShip,NumderShip)
     if pl==1:
+        CoordsShips_1PL[shipNumber].append((x + i, y))
+        print(CoordsShips_1PL[shipNumber])
+        '''
         if typeShip == 4:
             Cords4Ship1PL.append((x + i, y))
             print(Cords4Ship1PL)
@@ -371,6 +393,7 @@ def ListKilled(x,y,i,typeShip,NumderShip,pl):
                 Cords1Ship_3_1PL.append((x + i, y))
             if NumderShip == 4:
                 Cords1Ship_4_1PL.append((x + i, y))
+            '''
     if pl==2:
         if typeShip == 4:
             Cords4Ship2PL.append((x + i, y))
@@ -400,6 +423,13 @@ def ListKilled(x,y,i,typeShip,NumderShip,pl):
 
 def CheckKilled(x,y,pl):
     if pl==1:
+        for i in range(10):
+            if(y,x) in CoordsShips_1PL[i]:
+                CoordsShips_1PL[i].remove((y, x))
+                if len(CoordsShips_1PL[i]) == 0:
+                    x1 = FindFirstPos(x, y, pl)
+                    PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
+        ''''
         if (y,x) in Cords4Ship1PL:
             Cords4Ship1PL.remove((y,x))
             if len(Cords4Ship1PL)==0:
@@ -450,6 +480,7 @@ def CheckKilled(x,y,pl):
             if len(Cords1Ship_4_1PL)==0:
                 x1=FindFirstPos(x,y,1,)
                 PosDotButtons(x,x1,1,1)
+                '''
     else:
         if (y,x) in Cords4Ship2PL:
             Cords4Ship2PL.remove((y,x))
