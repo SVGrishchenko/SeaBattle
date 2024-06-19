@@ -14,31 +14,12 @@ Buttons1Pl = [[0 for x in range(10)] for y in range(10)]
 Buttons2Pl = [[0 for x in range(10)] for y in range(10)]
 InBattleShip1PL = 20
 InBattleShip2PL = 20
-# Cords4Ship1PL = []
-Cords4Ship2PL = []
-Cords3Ship_1_1PL = []
-Cords3Ship_2_1PL = []
-Cords3Ship_1_2PL = []
-Cords3Ship_2_2PL = []
-Cords2Ship_1_1PL = []
-Cords2Ship_2_1PL = []
-Cords2Ship_3_1PL = []
-Cords2Ship_1_2PL = []
-Cords2Ship_2_2PL = []
-Cords2Ship_3_2PL = []
-Cords1Ship_1_1PL = []
-Cords1Ship_2_1PL = []
-Cords1Ship_3_1PL = []
-Cords1Ship_4_1PL = []
-Cords1Ship_1_2PL = []
-Cords1Ship_2_2PL = []
-Cords1Ship_3_2PL = []
-Cords1Ship_4_2PL = []
 
 CoordsShips_1PL = [[] for y in range(10)]
+CoordsShips_2PL = [[] for y in range(10)]
 for i in range(10):
     CoordsShips_1PL[i] = []
-CoordsShips_2PL = [[] for y in range(10)]
+    CoordsShips_2PL[i] = []
 
 def GetShipNumber(typeShip, numberShip):
     if typeShip==4:
@@ -110,7 +91,7 @@ def GetMapXY(x,y,pl):
     else:
         return Map2Pl[y][x]
 def MainMenu():
-    global BackG, gm_fr, gm_fr2,BackG_picture,gm_fr_picture,gm_fr2_picture,Ship4_picture,Ship4
+    global BackG, gm_fr, gm_fr2,BackG_picture,gm_fr_picture,gm_fr2_picture,Ship4_picture,Ship4,InBattleShip2PL,InBattleShip1PL
     btnBackMainMenu.place_forget()
 
     BackG = ImageTk.PhotoImage(Bg)
@@ -137,6 +118,25 @@ def MainMenu():
     Entry4Ship.place_forget()
     Enter4Ship.place_forget()
     Entry4Ship.delete(0, END)
+    btnBackMainMenuFromBattle.place_forget()
+    LabelWhoStep.place_forget()
+
+    InBattleShip1PL = 20
+    InBattleShip2PL = 20
+
+    for x in range(10):
+        CoordsShips_1PL[x]=[]
+        CoordsShips_2PL[x]=[]
+        for y in range(10):
+            (Buttons1Pl[x][y]).fire=0
+            (Buttons2Pl[x][y]).fire=0
+            Buttons1Pl[x][y].config(state='normal',image=FonIm)
+            Buttons2Pl[x][y].config(state='normal',image=FonIm)
+            Buttons1Pl[x][y].place_forget()
+            Buttons2Pl[x][y].place_forget()
+            Map1Pl[x][y]=False
+            Map2Pl[x][y]=False
+
 def DefPlayWithFriends(pl):
     global Ship4,Ship4_picture,Ship3,Ship3_picture_1,Ship2,Ship2_picture,Ship1,Ship1_picture,Ship3_picture_2,FrS
     global Ship2_picture_2,Ship2_picture_3,Ship1_picture_2 ,Ship1_picture_3 ,Ship1_picture_4,Pole,Pole_picture
@@ -203,7 +203,7 @@ def Pos4Ship(pl):
         Coords('ship')
         Ship4_picture = canvas.create_image(coordsX,coordsY, image= Ship4)
         PrintMap(pl)
-        Enter4Ship.config(command=lambda: Pos3Ship(1,pl))
+        Enter4Ship.config(command=lambda: Pos1Ship(4,pl))
     else:
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
@@ -333,6 +333,8 @@ def defGoToBattleWithFriends():
             coords=x*10+y
             Coords('btn2')
             Buttons2Pl[x][y].place(x=coordsX, y=coordsY)
+    LabelWhoStep.config(image=StepNone)
+    LabelWhoStep.place(x=440,y=232)
 
 
 def DefFire(pl,x,y):
@@ -341,25 +343,32 @@ def DefFire(pl,x,y):
         if Map1Pl[x][y]==True:
             Map1Pl[x][y]='W'
             Buttons1Pl[x][y].config( image=CrossIm,state='disabled')
-            print('ne aboba')
+            (Buttons1Pl[x][y]).fire = 1
             InBattleShip1PL = InBattleShip1PL-1
+            LabelWhoStep.config(image=Step1PL)
+            CheckKilled(x, y, pl)
             if InBattleShip1PL==0:
+                ShowSurvivalShip()
                 messagebox.showinfo('Перемога','Переміг 2 гравець')
-            CheckKilled(x,y,pl)
+                btnBackMainMenuFromBattle.place(x=420,y=463)
         else:
-            print('aboba')
+            NextStep(pl)
+            (Buttons1Pl[x][y]).fire = 1
             Buttons1Pl[x][y].config(image=BlackDot ,state='disabled')
     if pl==2:
         if Map2Pl[x][y]==True:
             Map2Pl[x][y]='W'
             Buttons2Pl[x][y].config( image=CrossIm,state='disabled')
-            print('ne aboba')
             InBattleShip2PL = InBattleShip2PL-1
+            (Buttons2Pl[x][y]).fire = 1
+            LabelWhoStep.config(image=Step2PL)
             if InBattleShip2PL==0:
+                ShowSurvivalShip()
                 messagebox.showinfo('Перемога','Переміг 1 гравець')
             CheckKilled(x,y,pl)
         else:
-            print('aboba')
+            NextStep(pl)
+            (Buttons2Pl[x][y]).fire = 1
             Buttons2Pl[x][y].config(image=BlackDot ,state='disabled')
 
 
@@ -368,57 +377,9 @@ def ListKilled(x,y,i,typeShip,NumderShip,pl):
     if pl==1:
         CoordsShips_1PL[shipNumber].append((x + i, y))
         print(CoordsShips_1PL[shipNumber])
-        '''
-        if typeShip == 4:
-            Cords4Ship1PL.append((x + i, y))
-            print(Cords4Ship1PL)
-        if typeShip == 3:
-            if NumderShip == 1:
-                Cords3Ship_1_1PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords3Ship_2_1PL.append((x + i, y))
-        if typeShip == 2:
-            if NumderShip == 1:
-                Cords2Ship_1_1PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords2Ship_2_1PL.append((x + i, y))
-            if NumderShip == 3:
-                Cords2Ship_3_1PL.append((x + i, y))
-        if typeShip == 1:
-            if NumderShip == 1:
-                Cords1Ship_1_1PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords1Ship_2_1PL.append((x + i, y))
-            if NumderShip == 3:
-                Cords1Ship_3_1PL.append((x + i, y))
-            if NumderShip == 4:
-                Cords1Ship_4_1PL.append((x + i, y))
-            '''
     if pl==2:
-        if typeShip == 4:
-            Cords4Ship2PL.append((x + i, y))
-            print(Cords4Ship2PL)
-        if typeShip == 3:
-            if NumderShip == 1:
-                Cords3Ship_1_2PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords3Ship_2_2PL.append((x + i, y))
-        if typeShip == 2:
-            if NumderShip == 1:
-                Cords2Ship_1_2PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords2Ship_2_2PL.append((x + i, y))
-            if NumderShip == 3:
-                Cords2Ship_3_2PL.append((x + i, y))
-        if typeShip == 1:
-            if NumderShip == 1:
-                Cords1Ship_1_2PL.append((x + i, y))
-            if NumderShip == 2:
-                Cords1Ship_2_2PL.append((x + i, y))
-            if NumderShip == 3:
-                Cords1Ship_3_2PL.append((x + i, y))
-            if NumderShip == 4:
-                Cords1Ship_4_2PL.append((x + i, y))
+         CoordsShips_2PL[shipNumber].append((x + i, y))
+         print(CoordsShips_2PL[shipNumber])
 
 
 def CheckKilled(x,y,pl):
@@ -429,109 +390,13 @@ def CheckKilled(x,y,pl):
                 if len(CoordsShips_1PL[i]) == 0:
                     x1 = FindFirstPos(x, y, pl)
                     PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
-        ''''
-        if (y,x) in Cords4Ship1PL:
-            Cords4Ship1PL.remove((y,x))
-            if len(Cords4Ship1PL)==0:
-                x1=FindFirstPos(x,y,1)
-                PosDotButtons(x,x1,4,1)
-        if (y,x) in Cords3Ship_1_1PL:
-            Cords3Ship_1_1PL.remove((y,x))
-            if len(Cords3Ship_1_1PL)==0:
-                x1=FindFirstPos(x,y,1)
-                PosDotButtons(x,x1,3,1)
-        if (y,x) in Cords3Ship_2_1PL:
-            Cords3Ship_2_1PL.remove((y,x))
-            if len(Cords3Ship_2_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,3,1)
-        if (y,x) in Cords2Ship_1_1PL:
-            Cords2Ship_1_1PL.remove((y,x))
-            if len(Cords2Ship_1_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,2,1)
-        if (y,x) in Cords2Ship_2_1PL:
-            Cords2Ship_2_1PL.remove((y,x))
-            if len(Cords2Ship_2_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,2,1)
-        if (y,x) in Cords2Ship_3_1PL:
-            Cords2Ship_3_1PL.remove((y,x))
-            if len(Cords2Ship_3_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,2,1)
-        if (y,x) in Cords1Ship_1_1PL:
-            Cords1Ship_1_1PL.remove((y,x))
-            if len(Cords1Ship_1_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,1,1)
-        if (y,x) in Cords1Ship_2_1PL:
-            Cords1Ship_2_1PL.remove((y,x))
-            if len(Cords1Ship_2_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,1,1)
-        if (y,x) in Cords1Ship_3_1PL:
-            Cords1Ship_3_1PL.remove((y,x))
-            if len(Cords1Ship_3_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,1,1)
-        if (y,x) in Cords1Ship_4_1PL:
-            Cords1Ship_4_1PL.remove((y,x))
-            if len(Cords1Ship_4_1PL)==0:
-                x1=FindFirstPos(x,y,1,)
-                PosDotButtons(x,x1,1,1)
-                '''
     else:
-        if (y,x) in Cords4Ship2PL:
-            Cords4Ship2PL.remove((y,x))
-            if len(Cords4Ship2PL)==0:
-                x1=FindFirstPos(x,y,2)
-                PosDotButtons(x,x1,4,2)
-        if (y,x) in Cords3Ship_1_2PL:
-            Cords3Ship_1_2PL.remove((y,x))
-            if len(Cords3Ship_1_2PL)==0:
-                x1=FindFirstPos(x,y,2)
-                PosDotButtons(x,x1,3,2)
-        if (y,x) in Cords3Ship_2_2PL:
-            Cords3Ship_2_2PL.remove((y,x))
-            if len(Cords3Ship_2_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,3,2)
-        if (y,x) in Cords2Ship_1_2PL:
-            Cords2Ship_1_2PL.remove((y,x))
-            if len(Cords2Ship_1_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,2,2)
-        if (y,x) in Cords2Ship_2_2PL:
-            Cords2Ship_2_2PL.remove((y,x))
-            if len(Cords2Ship_2_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,2,2)
-        if (y,x) in Cords2Ship_3_2PL:
-            Cords2Ship_3_2PL.remove((y,x))
-            if len(Cords2Ship_3_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,2,2)
-        if (y,x) in Cords1Ship_1_2PL:
-            Cords1Ship_1_2PL.remove((y,x))
-            if len(Cords1Ship_1_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,1,2)
-        if (y,x) in Cords1Ship_2_2PL:
-            Cords1Ship_2_2PL.remove((y,x))
-            if len(Cords1Ship_2_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,1,2)
-        if (y,x) in Cords1Ship_3_2PL:
-            Cords1Ship_3_2PL.remove((y,x))
-            if len(Cords1Ship_3_2PL)==0:
-                x1=FindFirstPos(x,y,2,)
-                PosDotButtons(x,x1,1,2)
-        if (y,x) in Cords1Ship_4_2PL:
-            Cords1Ship_4_2PL.remove((y,x))
-            if len(Cords1Ship_4_2PL)==0:
-                x1=FindFirstPos(x,y,2)
-                PosDotButtons(x,x1,1,2)
+        for i in range(10):
+            if (y, x) in CoordsShips_2PL[i]:
+                CoordsShips_2PL[i].remove((y, x))
+                if len(CoordsShips_2PL[i]) == 0:
+                    x1 = FindFirstPos(x, y, pl)
+                    PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
 def FindFirstPos(y,x, pl):
     pos = x
     while True:
@@ -568,10 +433,40 @@ def PosDotButtons(y, x, len,pl):
 def SetBtnXY(y,x, pl):
     if(x>=0 and x<10 and y>=0 and y<10):
         if pl == 1:
+            (Buttons1Pl[y][x]).fire = 1
             Buttons1Pl[y][x].config(image=BlackDot ,state='disabled')
         else:
             Buttons2Pl[y][x].config(image=BlackDot ,state='disabled')
+            (Buttons2Pl[y][x]).fire = 1
 
+def NextStep(pl):
+    if pl==1:
+        for x in range(10):
+            for y in range(10):
+                Buttons1Pl[x][y].config(state='disabled')
+                LabelWhoStep.config(image=Step2PL)
+                if (Buttons2Pl[x][y]).fire == 0:
+                    Buttons2Pl[x][y].config(state='normal')
+                else:
+                    Buttons2Pl[x][y].config(state='disabled')
+    if pl==2:
+        for x in range(10):
+            for y in range(10):
+                Buttons2Pl[x][y].config(state='disabled')
+                LabelWhoStep.config(image=Step1PL)
+                if (Buttons1Pl[x][y]).fire == 0:
+                    Buttons1Pl[x][y].config(state='normal')
+                else:
+                    Buttons2Pl[x][y].config(state='disabled')
+
+
+def ShowSurvivalShip():
+    for x in range(10):
+        for y in range(10):
+            if Map1Pl[x][y]==True:
+                Buttons1Pl[x][y].config(image=BlueCross)
+            if Map2Pl[x][y]==True:
+                Buttons2Pl[x][y].config(image=BlueCross)
 
 Bg = Image.open('SeaBattle_Images/photo_2024-05-12_16-58-46.jpg')
 Bg = Bg.resize((1900,1500))
@@ -603,20 +498,41 @@ BlackDot = Image.open('SeaBattle_Images/BlackDot.png')
 BlackDot = BlackDot.resize((50,50))
 BlackDot = ImageTk.PhotoImage(BlackDot)
 
+StepNone = Image.open('SeaBattle_Images/Green_triangle_None.png')
+StepNone = StepNone.resize((40,40))
+StepNone = ImageTk.PhotoImage(StepNone)
+
+Step1PL = Image.open('SeaBattle_Images/Green_triangle_1Pl.png')
+Step1PL = Step1PL.resize((40,40))
+Step1PL = ImageTk.PhotoImage(Step1PL)
+
+Step2PL = Image.open('SeaBattle_Images/Green_triangle_2Pl.png')
+Step2PL = Step2PL.resize((40,40))
+Step2PL = ImageTk.PhotoImage(Step2PL)
+
+BlueCross = Image.open('SeaBattle_Images/Blue_cross.png')
+BlueCross = BlueCross.resize((50,50))
+BlueCross = ImageTk.PhotoImage(BlueCross)
+
 PL = Image.open('SeaBattle_Images/Pole.jpg')
 PL = PL.resize((550,450))
 for x in range(10):
     for y in range(10):
         Buttons1Pl[x][y] = Button(image=FonIm,height=25, width=25,command=lambda x1=x, y1=y: DefFire(1,x1,y1))
+        (Buttons1Pl[x][y]).fire = 0
         Buttons2Pl[x][y] = Button(image=FonIm, height=25, width=25,command=lambda x2=x, y2=y: DefFire(2,x2,y2) )
+        (Buttons2Pl[x][y]).fire = 0
 
 btnPlayWithFriends=Button(text='Грати з друзями',width=17,height=3,command=lambda: DefPlayWithFriends(1))
 btnBackMainMenu = Button(text='Назад в меню',width=30,height=5,command=MainMenu)
 Enter4Ship = Button(text='enter', command=lambda: Pos4Ship(1))
 btnNextPlayer = Button(text='Наступний гравець',width=30,height=5,command=lambda: DefPlayWithFriends(2))
 btnGoToBattleWithFriends = Button(text='В бій!',width=30,height=5,command=defGoToBattleWithFriends)
+btnBackMainMenuFromBattle = Button(text='Назад в меню',width=12,height=3,command=MainMenu)
 
 Entry4Ship = Entry(width=30)
+
+LabelWhoStep = Label(image=StepNone, bg='white')
 
 
 
