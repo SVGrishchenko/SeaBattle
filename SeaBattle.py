@@ -207,8 +207,8 @@ def Coords(type):
     global coords,coordsX,coordsY
     if type=='ship':
         coords += 11
-        coordsX = 97 + (coords % 10) * 37.5
-        coordsY = 19 + (coords // 10) * 39.75
+        coordsX = 7 + (coords % 10) * 37.5
+        coordsY = 44 + (coords // 10) * 39.75
     if type=='btn':
         coordsX = 64.5 + (coords % 10) * 37.5
         coordsY = 67 + (coords // 10) * 39.75
@@ -224,7 +224,7 @@ def Pos4Ship(pl):
         canvas.delete(Ship4_picture)
         Ship4 = ImageTk.PhotoImage(Ship4Im)
         Coords('ship')
-        Ship4_picture = canvas.create_image(coordsX,coordsY, image= Ship4)
+        Ship4_picture = canvas.create_image(coordsX,coordsY, image= Ship4, anchor = 'sw')
         PrintMap(pl)
         Enter4Ship.config(command=lambda: Pos3Ship(1,pl))
     else:
@@ -240,15 +240,14 @@ def Pos3Ship(v,pl):
     if(Coords0ShipValid(coords, 3,pl) ):
         PosShip(coords,3,pl,3,v)
         Coords('ship')
-        coordsX= coordsX-20
         if v==1:
             Enter4Ship.config(command=lambda: Pos3Ship(2,pl))
             canvas.delete(Ship3_picture_1)
-            Ship3_picture_1 = canvas.create_image(coordsX, coordsY, image=Ship3)
+            Ship3_picture_1 = canvas.create_image(coordsX, coordsY, image=Ship3, anchor = 'sw')
         else:
             Enter4Ship.config(command=lambda: Pos2Ship(1,pl))
             canvas.delete(Ship3_picture_2)
-            Ship3_picture_2 = canvas.create_image(coordsX, coordsY, image=Ship3)
+            Ship3_picture_2 = canvas.create_image(coordsX, coordsY, image=Ship3, anchor = 'sw')
     else:
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
@@ -263,18 +262,17 @@ def Pos2Ship(v,pl):
     if(Coords0ShipValid(coords, 2,pl) ):
         PosShip(coords,2,pl,2,v)
         Coords('ship')
-        coordsX= coordsX-40
         if v==1:
             canvas.delete(Ship2_picture)
-            Ship2_picture = canvas.create_image(coordsX,coordsY, image= Ship2)
+            Ship2_picture = canvas.create_image(coordsX,coordsY, image= Ship2, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos2Ship(2,pl))
         if v==2:
             canvas.delete(Ship2_picture_2)
-            Ship2_picture_2 = canvas.create_image(coordsX,coordsY, image= Ship2)
+            Ship2_picture_2 = canvas.create_image(coordsX,coordsY, image= Ship2, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos2Ship(3,pl))
         if v==3:
             canvas.delete(Ship2_picture_3)
-            Ship2_picture_3= canvas.create_image(coordsX,coordsY, image= Ship2)
+            Ship2_picture_3= canvas.create_image(coordsX,coordsY, image= Ship2, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos1Ship(1,pl))
     else:
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
@@ -289,44 +287,21 @@ def Pos1Ship(v,pl):
     if(Coords0ShipValid(coords, 1,pl) ):
         PosShip(coords,1,pl,1,v)
         Coords('ship')
-        coordsX= coordsX-60
-        if coords%10==0:
-            coordsX=420
-            if coords//10==2:
-                coordsY=67
-            if coords//10==3:
-                coordsY=106
-            if coords//10==4:
-                coordsY=146
-            if coords//10==5:
-                coordsY=188
-            if coords//10==6:
-                coordsY=230
-            if coords//10==7:
-                coordsY=270
-            if coords//10==8:
-                coordsY=310
-            if coords//10==9:
-                coordsY=350
-            if coords//10==10:
-                coordsY=395
-            if coords//10==11:
-                coordsY=435
         if v==1:
             canvas.delete(Ship1_picture)
-            Ship1_picture = canvas.create_image(coordsX,coordsY, image= Ship1)
+            Ship1_picture = canvas.create_image(coordsX,coordsY, image= Ship1, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos1Ship(2,pl))
         if v==2:
             canvas.delete(Ship1_picture_2)
-            Ship1_picture_2 = canvas.create_image(coordsX,coordsY, image= Ship1)
+            Ship1_picture_2 = canvas.create_image(coordsX,coordsY, image= Ship1, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos1Ship(3,pl))
         if v==3:
             canvas.delete(Ship1_picture_3)
-            Ship1_picture_3= canvas.create_image(coordsX,coordsY, image= Ship1)
+            Ship1_picture_3= canvas.create_image(coordsX,coordsY, image= Ship1, anchor = 'sw')
             Enter4Ship.config(command=lambda: Pos1Ship(4,pl))
         if v==4:
             canvas.delete(Ship1_picture_4)
-            Ship1_picture_4= canvas.create_image(coordsX,coordsY, image= Ship1)
+            Ship1_picture_4= canvas.create_image(coordsX,coordsY, image= Ship1, anchor = 'sw')
             Entry4Ship.place_forget()
             Enter4Ship.place_forget()
             if pl==1:
@@ -412,7 +387,12 @@ def ListKilled(x,y,i,typeShip,NumderShip,pl):
          print(CoordsShips_2PL[shipNumber])
 
 
-def CheckKilled(x,y,pl):
+def CheckKilled(x,y,pl): # TODO
+    if pl==1:
+        CoordsShips_xPL = CoordsShips_1PL
+    else:
+        CoordsShips_xPL = CoordsShips_2PL
+
     if pl==1:
         for i in range(10):
             if(y,x) in CoordsShips_1PL[i]:
@@ -493,7 +473,7 @@ def NextStep(pl):
                 if (Buttons1Pl[x][y]).fire == 0:
                     Buttons1Pl[x][y].config(state='normal')
                 else:
-                    Buttons2Pl[x][y].config(state='disabled')
+                    Buttons2Pl[x][y].config(state='disabled')  # TODO
 
 
 def ShowSurvivalShip():
