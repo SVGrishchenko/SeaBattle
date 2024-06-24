@@ -2,6 +2,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import tkinter.ttk as ttk
+import pygame
 
 root = Tk()
 root.title('Sea Battle')
@@ -14,12 +15,27 @@ Buttons1Pl = [[0 for x in range(10)] for y in range(10)]
 Buttons2Pl = [[0 for x in range(10)] for y in range(10)]
 InBattleShip1PL = 20
 InBattleShip2PL = 20
+pygame.mixer.init()
 
 CoordsShips_1PL = [[] for y in range(10)]
 CoordsShips_2PL = [[] for y in range(10)]
 for i in range(10):
     CoordsShips_1PL[i] = []
     CoordsShips_2PL[i] = []
+SoundMainMenu = pygame.mixer.Sound('Sound_SeaBattle/MusicMainMenu.mp3')
+SoundMainMenu.set_volume(0.3)
+
+SoundBlackDot=pygame.mixer.Sound('Sound_SeaBattle/BlackDot.mp3')
+SoundBlackDot.set_volume(0.2)
+
+SoundWounded = pygame.mixer.Sound('Sound_SeaBattle/Wounded_Of_Ship.wav')
+SoundWounded.set_volume(0.2)
+
+Sound_Explosion_Died_Ship = pygame.mixer.Sound('Sound_SeaBattle/Explosion_Died_Ship.mp3')
+Sound_Explosion_Died_Ship.set_volume(0.4)
+
+SoundWin = pygame.mixer.Sound('Sound_SeaBattle/Win.mp3')
+SoundWin.set_volume(0.3)
 
 def GetShipNumber(typeShip, numberShip):
     if typeShip==4:
@@ -92,6 +108,7 @@ def GetMapXY(x,y,pl):
         return Map2Pl[y][x]
 def MainMenu():
     global BackG, gm_fr, gm_fr2,BackG_picture,gm_fr_picture,gm_fr2_picture,Ship4_picture,Ship4,InBattleShip2PL,InBattleShip1PL
+    global SoundMainMenu
     btnBackMainMenu.place_forget()
 
     BackG = ImageTk.PhotoImage(Bg)
@@ -124,6 +141,11 @@ def MainMenu():
     InBattleShip1PL = 20
     InBattleShip2PL = 20
 
+    SoundWin.stop()
+
+    SoundMainMenu.play()
+
+
     for x in range(10):
         CoordsShips_1PL[x]=[]
         CoordsShips_2PL[x]=[]
@@ -139,7 +161,7 @@ def MainMenu():
 
 def DefPlayWithFriends(pl):
     global Ship4,Ship4_picture,Ship3,Ship3_picture_1,Ship2,Ship2_picture,Ship1,Ship1_picture,Ship3_picture_2,FrS
-    global Ship2_picture_2,Ship2_picture_3,Ship1_picture_2 ,Ship1_picture_3 ,Ship1_picture_4,Pole,Pole_picture
+    global Ship2_picture_2,Ship2_picture_3,Ship1_picture_2 ,Ship1_picture_3 ,Ship1_picture_4,Pole,Pole_picture, SounsMainMenu
     canvas.delete(gm_fr_picture,gm_fr2_picture,BackG_picture)
     btnPlayWithFriends.place_forget()
 
@@ -172,6 +194,7 @@ def DefPlayWithFriends(pl):
 
     Entry4Ship.place(x=600,y=350)
     Enter4Ship.place(x=785,y=345)
+    SoundMainMenu.stop()
     if pl==1:
         Enter4Ship.config(text='enter', command=lambda: Pos4Ship(1))
     else:
@@ -203,7 +226,7 @@ def Pos4Ship(pl):
         Coords('ship')
         Ship4_picture = canvas.create_image(coordsX,coordsY, image= Ship4)
         PrintMap(pl)
-        Enter4Ship.config(command=lambda: Pos1Ship(4,pl))
+        Enter4Ship.config(command=lambda: Pos3Ship(1,pl))
     else:
         messagebox.showerror("Помилка", "Сюди неможливо поставити корабель, бо він не вміщяеться в рядку"
                                         "або туди заборонено ставити")
@@ -348,10 +371,13 @@ def DefFire(pl,x,y):
             LabelWhoStep.config(image=Step1PL)
             CheckKilled(x, y, pl)
             if InBattleShip1PL==0:
+                SoundWin.play()
+                Sound_Explosion_Died_Ship.play()
                 ShowSurvivalShip()
                 messagebox.showinfo('Перемога','Переміг 2 гравець')
                 btnBackMainMenuFromBattle.place(x=420,y=463)
         else:
+            SoundBlackDot.play()
             NextStep(pl)
             (Buttons1Pl[x][y]).fire = 1
             Buttons1Pl[x][y].config(image=BlackDot ,state='disabled')
@@ -363,10 +389,14 @@ def DefFire(pl,x,y):
             (Buttons2Pl[x][y]).fire = 1
             LabelWhoStep.config(image=Step2PL)
             if InBattleShip2PL==0:
+                SoundWin.play()
+                Sound_Explosion_Died_Ship.play()
                 ShowSurvivalShip()
                 messagebox.showinfo('Перемога','Переміг 1 гравець')
+                btnBackMainMenuFromBattle.place(x=420, y=463)
             CheckKilled(x,y,pl)
         else:
+            SoundBlackDot.play()
             NextStep(pl)
             (Buttons2Pl[x][y]).fire = 1
             Buttons2Pl[x][y].config(image=BlackDot ,state='disabled')
@@ -388,15 +418,21 @@ def CheckKilled(x,y,pl):
             if(y,x) in CoordsShips_1PL[i]:
                 CoordsShips_1PL[i].remove((y, x))
                 if len(CoordsShips_1PL[i]) == 0:
+                    Sound_Explosion_Died_Ship.play()
                     x1 = FindFirstPos(x, y, pl)
                     PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
+                else:
+                    SoundWounded.play()
     else:
         for i in range(10):
             if (y, x) in CoordsShips_2PL[i]:
                 CoordsShips_2PL[i].remove((y, x))
                 if len(CoordsShips_2PL[i]) == 0:
+                    Sound_Explosion_Died_Ship.play()
                     x1 = FindFirstPos(x, y, pl)
                     PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
+                else:
+                    SoundWounded.play()
 def FindFirstPos(y,x, pl):
     pos = x
     while True:
