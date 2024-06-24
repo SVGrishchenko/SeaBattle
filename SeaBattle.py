@@ -465,7 +465,7 @@ def NextStep(pl):
                 if (Buttons1Pl[x][y]).fire == 0:
                     Buttons1Pl[x][y].config(state='normal')
                 else:
-                    Buttons2Pl[x][y].config(state='disabled')  # TODO
+                    Buttons1Pl[x][y].config(state='disabled')
 
 
 def ShowSurvivalShip():
