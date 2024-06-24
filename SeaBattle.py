@@ -106,6 +106,7 @@ def GetMapXY(x,y,pl):
         return Map1Pl[y][x]
     else:
         return Map2Pl[y][x]
+
 def MainMenu():
     global BackG, gm_fr, gm_fr2,BackG_picture,gm_fr_picture,gm_fr2_picture,Ship4_picture,Ship4,InBattleShip2PL,InBattleShip1PL
     global SoundMainMenu
@@ -215,6 +216,7 @@ def Coords(type):
     if type=='btn2':
         coordsX = 514 + (coords % 10) * 37.5
         coordsY = 67 + (coords // 10) * 39.75
+
 def Pos4Ship(pl):
     global coords,Ship4_picture,Ship4, coordsX, coordsY,RedCross, RedCross_picture
     coords = int(Entry4Ship.get())
@@ -387,32 +389,22 @@ def ListKilled(x,y,i,typeShip,NumderShip,pl):
          print(CoordsShips_2PL[shipNumber])
 
 
-def CheckKilled(x,y,pl): # TODO
+def CheckKilled(x,y,pl):
     if pl==1:
         CoordsShips_xPL = CoordsShips_1PL
     else:
         CoordsShips_xPL = CoordsShips_2PL
 
-    if pl==1:
-        for i in range(10):
-            if(y,x) in CoordsShips_1PL[i]:
-                CoordsShips_1PL[i].remove((y, x))
-                if len(CoordsShips_1PL[i]) == 0:
-                    Sound_Explosion_Died_Ship.play()
-                    x1 = FindFirstPos(x, y, pl)
-                    PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
-                else:
-                    SoundWounded.play()
-    else:
-        for i in range(10):
-            if (y, x) in CoordsShips_2PL[i]:
-                CoordsShips_2PL[i].remove((y, x))
-                if len(CoordsShips_2PL[i]) == 0:
-                    Sound_Explosion_Died_Ship.play()
-                    x1 = FindFirstPos(x, y, pl)
-                    PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
-                else:
-                    SoundWounded.play()
+    for i in range(10):
+        if(y,x) in CoordsShips_xPL[i]:
+            CoordsShips_xPL[i].remove((y, x))
+            if len(CoordsShips_xPL[i]) == 0:
+                Sound_Explosion_Died_Ship.play()
+                x1 = FindFirstPos(x, y, pl)
+                PosDotButtons(x, x1, GetShipLenByNumber(i), pl)
+            else:
+                SoundWounded.play()
+
 def FindFirstPos(y,x, pl):
     pos = x
     while True:
